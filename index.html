@@ -200,6 +200,41 @@ body {
 }
 .musica button:focus { outline: 3px solid #ff2e88; outline-offset: 2px; }
 
+/* ===== Variante Backrooms: pasillos amarillos, tono gastado tipo VHS ===== */
+body.backrooms { background: #1e1a05; }
+body.backrooms .fondo {
+  background: #1e1a05 url("img/fondo_backrooms.jpg") center center no-repeat;
+  -webkit-background-size: cover;
+  background-size: cover;
+  image-rendering: auto;
+  -webkit-animation: zumbido 7s steps(1) infinite;
+  animation: zumbido 7s steps(1) infinite;
+}
+body.backrooms .velo { background: rgba(30, 24, 2, 0.42); }
+body.backrooms .titulo { color: #fffbe0; text-shadow: 4px 4px 0 #8a7a12, 8px 8px 0 #1e1a05; }
+body.backrooms .titulo .gg { color: #f4e04d; text-shadow: 4px 4px 0 #5c520c, 8px 8px 0 #1e1a05; }
+body.backrooms .sub { color: #fff6b8; text-shadow: 2px 2px 0 #1e1a05; }
+body.backrooms .staff-label { color: #f4e04d; text-shadow: 2px 2px 0 #1e1a05; }
+body.backrooms .marco { background: #1e1a05; box-shadow: 0 0 0 4px #fffbe0, 0 0 0 8px #1e1a05, 8px 8px 0 8px rgba(0,0,0,0.35); }
+body.backrooms .nick { color: #fffbe0; text-shadow: 2px 2px 0 #1e1a05; }
+body.backrooms .rol { color: #1e1a05; background: #f4e04d; }
+body.backrooms .barra { background: rgba(30, 24, 2, 0.85); border-top-color: #f4e04d; }
+body.backrooms .datos, body.backrooms .musica { color: #e8dc8a; }
+body.backrooms .progreso { background: #1e1a05; box-shadow: inset 0 0 0 3px #fffbe0; }
+body.backrooms .musica button { background: #fffbe0; color: #1e1a05; }
+body.backrooms .progreso .lleno {
+  background: #f4e04d;
+  background-image: -webkit-linear-gradient(left, #f4e04d 0, #f4e04d 50%, #d9c434 50%, #d9c434 100%);
+  background-image: linear-gradient(90deg, #f4e04d 0, #f4e04d 50%, #d9c434 50%, #d9c434 100%);
+  -webkit-background-size: 24px 18px;
+  background-size: 24px 18px;
+}
+body.backrooms .musica button:focus { outline-color: #f4e04d; }
+body.backrooms .bandera { display: none; }
+/* Parpadeo leve de las luces fluorescentes */
+@-webkit-keyframes zumbido { 0%, 100% { opacity: 1; } 91% { opacity: 0.86; } 92% { opacity: 1; } 95% { opacity: 0.9; } 96% { opacity: 1; } }
+@keyframes zumbido { 0%, 100% { opacity: 1; } 91% { opacity: 0.86; } 92% { opacity: 1; } 95% { opacity: 0.9; } 96% { opacity: 1; } }
+
 @media (max-width: 700px) {
   .titulo { font-size: 26px; }
   .sub { font-size: 20px; }
@@ -213,7 +248,7 @@ body {
   .estado, .datos { float: none; max-width: 100%; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .marco { -webkit-animation: none !important; animation: none !important; }
+  .marco, body.backrooms .fondo { -webkit-animation: none !important; animation: none !important; }
 }
 </style>
 
@@ -230,7 +265,7 @@ body {
       <div class="estrella">&#9733;</div>
     </div>
     <h1 class="titulo">CHILE <span class="gg">GG</span> MOD'S</h1>
-    <div class="sub">TTT &middot; PROP HUNT &middot; MURDER &middot; DEATHRUN &middot; BACKROOMS</div>
+    <div class="sub" id="sub">TTT &middot; PROP HUNT &middot; MURDER &middot; DEATHRUN &middot; BACKROOMS</div>
 
     <div class="staff-label">OWNERS</div>
     <div class="staff">
@@ -260,7 +295,7 @@ body {
     <div class="progreso"><div class="lleno" id="lleno"></div></div>
     <div class="musica">
       <button type="button" id="btnMusica">&#9654; Musica</button>
-      <span>Clint Eastwood (8-bit cover)</span>
+      <span id="cancion">Clint Eastwood (8-bit cover)</span>
     </div>
   </div>
 </div>
@@ -284,8 +319,38 @@ body {
     murder: "Murder",
     deathrun: "Deathrun",
     backrooms: "Backrooms",
+    rsmelonbomber: "Melonbomber",
     sandbox: "Sandbox"
   };
+
+  /* Fondo y musica propios por modo (si no esta aqui, se usa el normal) */
+  var TEMAS = {
+    backrooms: {
+      clase: "backrooms",
+      ogg: "musica_backrooms.ogg",
+      mp3: "musica_backrooms.mp3",
+      cancion: "It's just a burning memory",
+      sub: "NO DEBERIAS ESTAR AQUI..."
+    }
+  };
+  var temaActual = "";
+
+  function aplicarTema(gamemode) {
+    var tema = TEMAS[gamemode];
+    if (!tema || temaActual === gamemode) { return; }
+    temaActual = gamemode;
+    document.body.className = tema.clase;
+    texto("cancion", tema.cancion);
+    if (tema.sub) { texto("sub", tema.sub); }
+    var sonaba = !audio.paused;
+    audio.pause();
+    while (audio.firstChild) { audio.removeChild(audio.firstChild); }
+    var s1 = document.createElement("source"); s1.src = tema.ogg; s1.type = "audio/ogg";
+    var s2 = document.createElement("source"); s2.src = tema.mp3; s2.type = "audio/mpeg";
+    audio.appendChild(s1); audio.appendChild(s2);
+    audio.load();
+    if (sonaba) { tocar(); }
+  }
 
   function texto(id, valor) {
     var el = document.getElementById(id);
@@ -318,6 +383,7 @@ body {
   window.GameDetails = function (servername, serverurl, mapname, maxplayers, steamid, gamemode, vol, language) {
     texto("mapa", mapname || "");
     texto("modo", NOMBRES_MODO[gamemode] || gamemode || "");
+    aplicarTema(gamemode);
     texto("estado", "Entrando a " + (servername || "Chile GG Mod's") + "...");
     if (typeof vol === "number" && vol >= 0) { volumen = Math.min(1, vol) * 0.6; }
     tocar();
@@ -341,6 +407,10 @@ body {
     else if (/Workshop/i.test(estado)) { progreso(35); }
     else if (/Starting Lua/i.test(estado)) { progreso(85); }
   };
+
+  /* Vista previa en el navegador: index.html?modo=backrooms */
+  var m = /[?&]modo=([a-z_]+)/.exec(window.location.search || "");
+  if (m) { texto("modo", NOMBRES_MODO[m[1]] || m[1]); aplicarTema(m[1]); }
 
   tocar();
 })();
