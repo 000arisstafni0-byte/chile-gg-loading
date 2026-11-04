@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chile GG Mod's Carga</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap">
+<style>
+/* Layout: pantalla completa estilo arcade; titulo y staff al centro, barra de carga abajo. Un solo look oscuro (es una pantalla de juego). */
+:root {
+  --cielo: #2a0f4a;
+  --tinta: #fff4fb;
+  --rosa: #ff2e88;
+  --azul-cl: #2f6bff;
+  --rojo-cl: #e8203a;
+  --tenue: #cbb6e6;
+  --display: "Press Start 2P", "Courier New", monospace;
+  --texto: "VT323", "Courier New", monospace;
+  color-scheme: dark;
+}
+html, body { height: 100%; }
+body {
+  margin: 0;
+  overflow: hidden;
+  background: #2a0f4a;
+  color: #fff4fb;
+  font-family: "VT323", "Courier New", monospace;
+  -webkit-font-smoothing: none;
+}
+
+/* Fondo pixel art (planetas) */
+.fondo {
+  position: fixed; top: 0; right: 0; bottom: 0; left: 0;
+  background: #2a0f4a url("img/fondo.png") center center no-repeat;
+  -webkit-background-size: cover;
+  background-size: cover;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: pixelated;
+}
+.velo {
+  position: fixed; top: 0; right: 0; bottom: 0; left: 0;
+  background: rgba(20, 6, 40, 0.45);
+}
+.scan {
+  position: fixed; top: 0; right: 0; bottom: 0; left: 0;
+  background-image: -webkit-linear-gradient(top, rgba(0,0,0,0.18) 50%, rgba(0,0,0,0) 50%);
+  background-image: linear-gradient(to bottom, rgba(0,0,0,0.18) 50%, rgba(0,0,0,0) 50%);
+  -webkit-background-size: 100% 4px;
+  background-size: 100% 4px;
+  pointer-events: none;
+}
+
+.escena {
+  position: relative;
+  height: 100%;
+  text-align: center;
+  padding-left: 16px;
+  padding-right: 16px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  box-sizing: border-box;
+}
+.centro {
+  position: absolute; left: 0; right: 0; top: 46%;
+  -webkit-transform: translateY(-50%);
+  transform: translateY(-50%);
+  padding: 0 16px;
+}
+
+/* Bandera chilena en pixeles */
+.bandera {
+  display: inline-block;
+  width: 72px; height: 48px;
+  position: relative;
+  margin-bottom: 18px;
+  box-shadow: 0 0 0 4px #14062a, 6px 6px 0 4px rgba(0,0,0,0.35);
+}
+.bandera .blanco { position: absolute; top: 0; left: 0; right: 0; height: 24px; background: #ffffff; }
+.bandera .rojo   { position: absolute; bottom: 0; left: 0; right: 0; height: 24px; background: #e8203a; }
+.bandera .azul   { position: absolute; top: 0; left: 0; width: 24px; height: 24px; background: #2f6bff; }
+.bandera .estrella {
+  position: absolute; top: 5px; left: 5px; width: 14px; height: 14px;
+  font-family: Arial, sans-serif; font-size: 15px; line-height: 14px; text-align: center; color: #ffffff;
+}
+
+.titulo {
+  font-family: "Press Start 2P", "Courier New", monospace;
+  font-size: 54px;
+  line-height: 1.15;
+  letter-spacing: 2px;
+  margin: 0;
+  color: #fff4fb;
+  text-shadow: 4px 4px 0 #ff2e88, 8px 8px 0 #14062a;
+}
+.titulo .gg { color: #ff2e88; text-shadow: 4px 4px 0 #2f6bff, 8px 8px 0 #14062a; }
+.sub {
+  margin-top: 18px;
+  font-size: 26px;
+  letter-spacing: 2px;
+  color: #cbb6e6;
+}
+.sub b { color: #fff4fb; font-weight: normal; }
+
+/* Staff */
+.staff-label {
+  margin-top: 40px;
+  font-family: "Press Start 2P", monospace;
+  font-size: 12px;
+  letter-spacing: 3px;
+  color: #ff2e88;
+}
+.staff { margin-top: 16px; font-size: 0; }
+.owner {
+  display: inline-block;
+  vertical-align: top;
+  width: 168px;
+  margin: 0 14px 14px;
+  font-size: 16px;
+}
+.marco {
+  width: 128px; height: 128px;
+  margin: 0 auto;
+  background: #14062a;
+  padding: 6px;
+  box-shadow: 0 0 0 4px #fff4fb, 0 0 0 8px #14062a, 8px 8px 0 8px rgba(0,0,0,0.35);
+  -webkit-transition: -webkit-transform 0.2s;
+  transition: transform 0.2s;
+}
+.owner:nth-child(1) .marco { -webkit-animation: flotar 3.2s ease-in-out infinite; animation: flotar 3.2s ease-in-out infinite; }
+.owner:nth-child(2) .marco { -webkit-animation: flotar 3.2s ease-in-out 0.4s infinite; animation: flotar 3.2s ease-in-out 0.4s infinite; }
+.owner:nth-child(3) .marco { -webkit-animation: flotar 3.2s ease-in-out 0.8s infinite; animation: flotar 3.2s ease-in-out 0.8s infinite; }
+.marco img { display: block; width: 128px; height: 128px; max-width: 100%; }
+.nick {
+  margin-top: 22px;
+  font-family: "Press Start 2P", monospace;
+  font-size: 12px;
+  color: #fff4fb;
+  word-wrap: break-word;
+}
+.rol {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 3px 8px 2px;
+  font-size: 20px;
+  letter-spacing: 2px;
+  color: #14062a;
+  background: #ff2e88;
+}
+
+@-webkit-keyframes flotar { 0%, 100% { -webkit-transform: translateY(0); } 50% { -webkit-transform: translateY(-6px); } }
+@keyframes flotar { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+
+/* Barra inferior */
+.barra {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  padding: 16px 24px 22px;
+  padding-bottom: calc(22px + env(safe-area-inset-bottom, 0px));
+  background: rgba(20, 6, 40, 0.82);
+  border-top: 4px solid #ff2e88;
+  text-align: left;
+  font-size: 24px;
+}
+.fila { overflow: hidden; }
+.estado { float: left; color: #fff4fb; max-width: 60%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.datos { float: right; color: #cbb6e6; }
+.datos b { color: #fff4fb; font-weight: normal; }
+.progreso {
+  margin-top: 10px;
+  height: 18px;
+  background: #14062a;
+  box-shadow: inset 0 0 0 3px #fff4fb;
+  padding: 5px;
+}
+.progreso .lleno {
+  height: 18px;
+  width: 4%;
+  background: #ff2e88;
+  background-image: -webkit-linear-gradient(left, #ff2e88 0, #ff2e88 50%, #ff5ca3 50%, #ff5ca3 100%);
+  background-image: linear-gradient(90deg, #ff2e88 0, #ff2e88 50%, #ff5ca3 50%, #ff5ca3 100%);
+  -webkit-background-size: 24px 18px;
+  background-size: 24px 18px;
+  -webkit-transition: width 0.4s;
+  transition: width 0.4s;
+}
+.musica {
+  margin-top: 8px;
+  font-size: 20px;
+  color: #cbb6e6;
+}
+.musica button {
+  font-family: "VT323", monospace;
+  font-size: 20px;
+  color: #14062a;
+  background: #fff4fb;
+  border: 0;
+  padding: 1px 10px;
+  margin-right: 10px;
+  cursor: pointer;
+}
+.musica button:focus { outline: 3px solid #ff2e88; outline-offset: 2px; }
+
+@media (max-width: 700px) {
+  .titulo { font-size: 26px; }
+  .sub { font-size: 20px; }
+  .owner { width: 110px; margin: 0 6px 12px; }
+  .marco { width: 84px; height: 84px; padding: 4px; }
+  .marco img { width: 84px; height: 84px; }
+  .nick { font-size: 9px; margin-top: 18px; }
+  .rol { font-size: 16px; }
+  .staff-label { margin-top: 24px; }
+  .barra { font-size: 18px; padding-left: 16px; padding-right: 16px; }
+  .estado, .datos { float: none; max-width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .marco { -webkit-animation: none !important; animation: none !important; }
+}
+</style>
+
+</head>
+<body>
+<div class="fondo"></div>
+<div class="velo"></div>
+<div class="scan"></div>
+
+<div class="escena">
+  <div class="centro">
+    <div class="bandera" aria-hidden="true">
+      <div class="blanco"></div><div class="rojo"></div><div class="azul"></div>
+      <div class="estrella">&#9733;</div>
+    </div>
+    <h1 class="titulo">CHILE <span class="gg">GG</span> MOD'S</h1>
+    <div class="sub">TTT &middot; PROP HUNT &middot; MURDER &middot; DEATHRUN &middot; BACKROOMS</div>
+
+    <div class="staff-label">OWNERS</div>
+    <div class="staff">
+      <div class="owner">
+        <div class="marco"><img src="img/fulgencio.jpg" alt="Fulgencio"></div>
+        <div class="nick">Fulgencio</div>
+        <div class="rol">OWNER</div>
+      </div>
+      <div class="owner">
+        <div class="marco"><img src="img/nocked.jpg" alt="Nocked"></div>
+        <div class="nick">Nocked</div>
+        <div class="rol">OWNER</div>
+      </div>
+      <div class="owner">
+        <div class="marco"><img src="img/carlos655.jpg" alt="Carlos655"></div>
+        <div class="nick">Carlos655</div>
+        <div class="rol">OWNER</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="barra">
+    <div class="fila">
+      <div class="estado" id="estado">Conectando al servidor...</div>
+      <div class="datos">Mapa <b id="mapa">ttt_minecraft_b5</b> &middot; Modo <b id="modo">TTT</b></div>
+    </div>
+    <div class="progreso"><div class="lleno" id="lleno"></div></div>
+    <div class="musica">
+      <button type="button" id="btnMusica">&#9654; Musica</button>
+      <span>Clint Eastwood (8-bit cover)</span>
+    </div>
+  </div>
+</div>
+
+<audio id="audio" loop preload="auto">
+  <source src="musica.ogg" type="audio/ogg">
+  <source src="musica.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+(function () {
+  var audio = document.getElementById("audio");
+  var btn = document.getElementById("btnMusica");
+  var volumen = 0.5;
+  var totalArchivos = 0;
+  var faltan = 0;
+
+  var NOMBRES_MODO = {
+    terrortown: "TTT",
+    prop_hunt: "Prop Hunt",
+    murder: "Murder",
+    deathrun: "Deathrun",
+    backrooms: "Backrooms",
+    sandbox: "Sandbox"
+  };
+
+  function texto(id, valor) {
+    var el = document.getElementById(id);
+    if (el) { el.textContent = valor; }
+  }
+  function progreso(pct) {
+    if (pct < 4) { pct = 4; }
+    if (pct > 100) { pct = 100; }
+    document.getElementById("lleno").style.width = pct + "%";
+  }
+  function actualizarBoton() {
+    btn.innerHTML = audio.paused ? "&#9654; Musica" : "&#10074;&#10074; Musica";
+  }
+  function tocar() {
+    audio.volume = volumen;
+    try {
+      var p = audio.play();
+      if (p && p.then) { p.then(actualizarBoton, actualizarBoton); }
+    } catch (e) {}
+    actualizarBoton();
+  }
+
+  btn.onclick = function () {
+    if (audio.paused) { tocar(); } else { audio.pause(); actualizarBoton(); }
+  };
+  audio.onplay = actualizarBoton;
+  audio.onpause = actualizarBoton;
+
+  /* Funciones que llama Garry's Mod mientras carga */
+  window.GameDetails = function (servername, serverurl, mapname, maxplayers, steamid, gamemode, vol, language) {
+    texto("mapa", mapname || "");
+    texto("modo", NOMBRES_MODO[gamemode] || gamemode || "");
+    texto("estado", "Entrando a " + (servername || "Chile GG Mod's") + "...");
+    if (typeof vol === "number" && vol >= 0) { volumen = Math.min(1, vol) * 0.6; }
+    tocar();
+  };
+  window.SetFilesTotal = function (total) {
+    totalArchivos = total;
+  };
+  window.SetFilesNeeded = function (needed) {
+    faltan = needed;
+    if (totalArchivos > 0) {
+      progreso(100 * (totalArchivos - faltan) / totalArchivos);
+    }
+  };
+  window.DownloadingFile = function (archivo) {
+    var nombre = String(archivo || "").split("/").pop();
+    texto("estado", "Descargando " + nombre);
+  };
+  window.SetStatusChanged = function (estado) {
+    texto("estado", estado);
+    if (/Sending client info/i.test(estado)) { progreso(100); }
+    else if (/Workshop/i.test(estado)) { progreso(35); }
+    else if (/Starting Lua/i.test(estado)) { progreso(85); }
+  };
+
+  tocar();
+})();
+</script>
+
+</body>
+</html>
